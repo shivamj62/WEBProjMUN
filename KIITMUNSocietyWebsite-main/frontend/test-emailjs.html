@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmailJS Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <h1>EmailJS Configuration Test</h1>
+    <button onclick="testEmailJS()">Test EmailJS</button>
+    <div id="result"></div>
+
+    <script>
+        function testEmailJS() {
+            console.log('Testing EmailJS configuration...');
+            
+            // Initialize EmailJS
+            emailjs.init('-UiMCK4XsRkEHYBdC');
+            
+            // Test email parameters
+            const params = {
+                from_name: 'Test User',
+                from_email: 'test@example.com',
+                subject: 'Test Subject',
+                message: 'This is a test message from EmailJS configuration test.'
+            };
+            
+            // Send test email
+            emailjs.send('service_3e9tmiy', 'template_wu2gqa5', params)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    document.getElementById('result').innerHTML = 
+                        '<p style="color: green;">✅ Email sent successfully!</p>';
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    document.getElementById('result').innerHTML = 
+                        '<p style="color: red;">❌ Failed to send email: ' + JSON.stringify(error) + '</p>';
+                });
+        }
+    </script>
+</body>
+</html>

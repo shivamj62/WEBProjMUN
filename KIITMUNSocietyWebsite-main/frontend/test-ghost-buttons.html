@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Button Variant Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ghost Button Styles */
+        .btn-ghost {
+            background-color: transparent;
+            color: #64748b; /* text-secondary-700 */
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-ghost:hover {
+            background-color: #f1f5f9; /* bg-secondary-100 */
+            color: #1e293b; /* text-secondary-900 */
+        }
+
+        /* Original button styles for comparison */
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-outline {
+            border: 1px solid #2563eb;
+            color: #2563eb;
+            background-color: transparent;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-outline:hover {
+            background-color: #2563eb;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Button Variant Comparison</h1>
+        
+        <div class="grid md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 text-blue-600">Ghost Buttons (New)</h2>
+                <div class="space-y-4">
+                    <button class="btn-ghost">Default Ghost</button>
+                    <button class="btn-ghost text-lg px-8 py-3">Large Ghost</button>
+                    <button class="btn-ghost inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        With Icon
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 text-green-600">Primary Buttons (Original)</h2>
+                <div class="space-y-4">
+                    <button class="btn-primary">Default Primary</button>
+                    <button class="btn-primary text-lg px-8 py-3">Large Primary</button>
+                    <button class="btn-primary inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        With Icon
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 text-purple-600">Outline Buttons (Original)</h2>
+                <div class="space-y-4">
+                    <button class="btn-outline">Default Outline</button>
+                    <button class="btn-outline text-lg px-8 py-3">Large Outline</button>
+                    <button class="btn-outline inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        With Icon
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold mb-4">Ghost Button Benefits</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li><strong>Subtle appearance:</strong> Provides clear action without overwhelming the interface</li>
+                <li><strong>Consistent hover states:</strong> Smooth background color transitions for better UX</li>
+                <li><strong>Accessibility friendly:</strong> Maintains proper contrast ratios</li>
+                <li><strong>Modern design:</strong> Follows contemporary minimalist design principles</li>
+                <li><strong>Versatile:</strong> Works well in various contexts and layouts</li>
+            </ul>
+        </div>
+
+        <div class="bg-blue-50 p-6 rounded-lg mt-8">
+            <h2 class="text-xl font-semibold mb-4 text-blue-800">Implementation Status</h2>
+            <p class="text-blue-700 mb-4">
+                All buttons throughout your KIIT MUN Society website have been successfully updated to use the ghost variant:
+            </p>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <h3 class="font-semibold mb-2">Updated Components:</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>BlogsSimple.jsx</li>
+                        <li>About.jsx</li>
+                        <li>Hero.jsx</li>
+                        <li>Contact.jsx</li>
+                        <li>Resources.jsx</li>
+                        <li>Footer.jsx</li>
+                        <li>Header.js</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Updated UI Components:</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Carousel.jsx</li>
+                        <li>NewsCarousel.jsx</li>
+                        <li>PortraitCarousel.jsx</li>
+                        <li>BlogDetailModal.jsx</li>
+                        <li>UnifiedCarouselSection.jsx</li>
+                        <li>ResourcesDashboard page</li>
+                        <li>Blogs page</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Parliamentary Rules
+
+Rules and procedures for parliamentary debate.
+
+Created on: 2025-08-29T00:08:43.933936
+
+This is a test document for the KIIT MUN Society resource management system.
+It contains sample content to demonstrate the file upload functionality.
+
+## Features Tested:
+- File validation
+- Metadata storage
+- Unique filename generation
+- MIME type detection
+- File size tracking

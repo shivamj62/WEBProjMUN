@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "munsoc-website"
+version = "0.1.0"
+description = "MUN Society Website with FastAPI and SQLite"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    {name = "MUN Society", email = "admin@munsociety.edu"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.23.0",
+    "python-multipart>=0.0.6",
+    "aiofiles>=23.0.0",
+    "python-dotenv>=1.0.0",
+    "jinja2>=3.1.0",
+    "aiosqlite>=0.19.0",
+    "email-validator>=2.0.0",
+    "requests>=2.32.4",
+    "libsql-client>=0.3.1",
+    "httpx>=0.28.1",
+    "libsql>=0.1.10",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "httpx>=0.24.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/munsociety/website"
+Repository = "https://github.com/munsociety/website.git"
+Issues = "https://github.com/munsociety/website/issues"
+
+[tool.hatch.version]
+path = "app/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
