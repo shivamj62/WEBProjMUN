@@ -1,4 +1,5 @@
 services:
+  # Backend API Service
   - type: web
     name: munsociety-api
     env: python
@@ -10,3 +11,69 @@ services:
         value: 3.11.0
       - key: PORT
         generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: TURSO_DATABASE_URL
+        value: https://kiit-mun-society-shivamj62.aws-ap-south-1.turso.io
+      - key: TURSO_AUTH_TOKEN
+        value: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTY1MDgxOTMsImlkIjoiODE1NjYyMjEtOWM0OS00YjRlLWIyOTgtZGYyZDNkMmExODllIiwicmlkIjoiYWE0NTRiOTctYWQ4Mi00ZjgwLWE0MDktOTRiMWYxNzVkY2I5In0.6QxFrtLAdofdrtH5KeUUW3nGB5pMof6RYFLsYUG48QdaMQ0Y8l28qIo9-EMVhVIIyfFTKGdXG8s1tHDGuuhyCg
+
+  # Frontend Service
+  - type: web
+    name: munsociety-frontend
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: NEXT_PUBLIC_API_URL
+        value: https://munsociety-api.onrender.com
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+        value: -UiMCK4XsRkEHYBdC
+      - key: NEXT_PUBLIC_EMAILJS_SERVICE_ID
+        value: service_3e9tmiy
+      - key: NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+        value: template_wu2gqa5services:
+  # Backend API Service
+  - type: web
+    name: munsociety-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: TURSO_DATABASE_URL
+        value: https://kiit-mun-society-shivamj62.aws-ap-south-1.turso.io
+      - key: TURSO_AUTH_TOKEN
+        value: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTY1MDgxOTMsImlkIjoiODE1NjYyMjEtOWM0OS00YjRlLWIyOTgtZGYyZDNkMmExODllIiwicmlkIjoiYWE0NTRiOTctYWQ4Mi00ZjgwLWE0MDktOTRiMWYxNzVkY2I5In0.6QxFrtLAdofdrtH5KeUUW3nGB5pMof6RYFLsYUG48QdaMQ0Y8l28qIo9-EMVhVIIyfFTKGdXG8s1tHDGuuhyCg
+
+  # Frontend Service
+  - type: web
+    name: munsociety-frontend
+    env: node
+    plan: free
+    buildCommand: cd frontend && npm ci && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: NEXT_PUBLIC_API_URL
+        value: https://munsociety-api.onrender.com
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+        value: -UiMCK4XsRkEHYBdC
+      - key: NEXT_PUBLIC_EMAILJS_SERVICE_ID
+        value: service_3e9tmiy
+      - key: NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+        value: template_wu2gqa5
