@@ -133,10 +133,11 @@ async def shutdown_event():
     """Close database connections on shutdown"""
     await close_db()
 
-# Health check endpoint
+# Health check endpoint - Support both GET and HEAD for Render
 @app.get("/api/health", response_model=HealthResponse)
+@app.head("/api/health")
 async def health_check():
-    """Basic health check endpoint"""
+    """Basic health check endpoint - supports HEAD for monitoring"""
     print("🔍 HEALTH CHECK endpoint called!")
     return HealthResponse(
         status="healthy",
@@ -198,10 +199,11 @@ async def public_resources():
         "login_required": True
     }
 
-# Root endpoint
+# Root endpoint - Support both GET and HEAD for Render health checks
 @app.get("/")
+@app.head("/")
 async def root():
-    """Root endpoint with basic information"""
+    """Root endpoint with basic information - supports HEAD for health checks"""
     return {
         "message": "MUN Society Website API",
         "version": "0.1.0",
@@ -209,7 +211,9 @@ async def root():
         "health": "/api/health"
     }
 
-# Add this to the bottom of app/main.py temporarily
+# For Render deployment - use PORT environment variable
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    # Render provides PORT environment variable
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
