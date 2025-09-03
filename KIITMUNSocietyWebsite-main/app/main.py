@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 import os
+import sys
 import time
 import logging
 from datetime import datetime
@@ -18,6 +19,8 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 print("=== FASTAPI APP STARTING ===")
+print(f"🌍 Environment: HOST=0.0.0.0, PORT={os.getenv('PORT', '10000')}")
+print(f"🌍 Python executable: {sys.executable}")
 
 # Create FastAPI app
 app = FastAPI(
@@ -214,6 +217,7 @@ async def root():
 # For Render deployment - use PORT environment variable
 if __name__ == "__main__":
     import uvicorn
-    # Render provides PORT environment variable
-    port = int(os.getenv("PORT", 8000))
+    # Render provides PORT environment variable (default is 10000)
+    port = int(os.getenv("PORT", 10000))
+    print(f"🚀 Starting server on 0.0.0.0:{port}")
     uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
