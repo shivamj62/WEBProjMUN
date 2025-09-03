@@ -1,4 +1,4 @@
-// File: C:\KIITMUNSocietyWebsite-main\frontend\src\app\auth\register\page.js
+// File: C:\WEBProjMUN\KIITMUNSocietyWebsite-main\frontend\src\app\auth\register\page.js
 import * as entry from '../../../../../src/app/auth/register/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
