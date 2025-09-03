@@ -51,7 +51,7 @@ const Carousel = ({
 
   if (!slides || slides.length === 0) {
     return (
-      <div className={`w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center ${className}`}>
+      <div className={`w-full h-72 bg-gray-100 rounded-lg flex items-center justify-center ${className}`}>
         <p className="text-gray-500 text-lg">No slides available</p>
       </div>
     );
@@ -59,7 +59,7 @@ const Carousel = ({
 
   return (
     <div 
-      className={`relative w-full h-96 md:h-[500px] lg:h-[600px] overflow-hidden rounded-xl group ${className}`}
+      className={`relative w-full h-72 md:h-80 lg:h-96 overflow-hidden rounded-xl group ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

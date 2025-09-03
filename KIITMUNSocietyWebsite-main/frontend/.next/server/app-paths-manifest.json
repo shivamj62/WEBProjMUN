@@ -1,18 +1,18 @@
 {
   "/_not-found": "app/_not-found.js",
   "/admin-panel/page": "app/admin-panel/page.js",
-  "/auth/register/page": "app/auth/register/page.js",
-  "/auth/login/page": "app/auth/login/page.js",
   "/auth/admin-login/page": "app/auth/admin-login/page.js",
-  "/profile/page": "app/profile/page.js",
-  "/page": "app/page.js",
-  "/resources/page": "app/resources/page.js",
-  "/contact/page": "app/contact/page.js",
+  "/auth/register/page": "app/auth/register/page.js",
   "/resources-dashboard/page": "app/resources-dashboard/page.js",
-  "/admin/resources/page": "app/admin/resources/page.js",
+  "/page": "app/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/resources/page": "app/resources/page.js",
+  "/navbar-demo/page": "app/navbar-demo/page.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/admin/blogs/page": "app/admin/blogs/page.js",
+  "/admin/members/page": "app/admin/members/page.js",
   "/admin/blogs/[id]/edit/page": "app/admin/blogs/[id]/edit/page.js",
   "/admin/page": "app/admin/page.js",
-  "/admin/members/page": "app/admin/members/page.js",
-  "/admin/blogs/page": "app/admin/blogs/page.js",
-  "/admin/blogs/create/page": "app/admin/blogs/create/page.js"
+  "/admin/blogs/create/page": "app/admin/blogs/create/page.js",
+  "/admin/resources/page": "app/admin/resources/page.js"
 }

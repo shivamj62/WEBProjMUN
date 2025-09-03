@@ -2,6 +2,7 @@
 
 import { Users, Globe, Award, Target } from 'lucide-react';
 import { ScrollAnimationWrapper } from '@/components/ui/scroll-animations';
+import { DirectionAwareHover } from '@/components/ui/direction-aware-hover';
 
 const About = () => {
   const features = [
@@ -46,8 +47,8 @@ const About = () => {
         <ScrollAnimationWrapper className="grid md:grid-cols-2 gap-16 items-center mb-16">
           {/* Text Content */}
           <div>
-            <h3 className="text-3xl font-serif font-bold text-white mb-6">
-              Our Mission
+            <h3 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6">
+              Humilitas occidit superbiam
             </h3>
             <p className="text-lg text-gray-200 mb-6 leading-relaxed">
               At KIIT MUN Society, we believe in empowering students to become tomorrow's global leaders. 
@@ -55,7 +56,7 @@ const About = () => {
               a platform for students to engage with real-world issues and develop critical thinking skills.
             </p>
             <p className="text-lg text-gray-200 mb-6 leading-relaxed">
-              Our society organizes regular conferences, workshops, and training sessions designed to enhance 
+              Our society organizes regular workshops, and training sessions designed to enhance 
               participants' understanding of international relations, diplomacy, and current global affairs. 
               We strive to create an inclusive environment where students from all backgrounds can learn, 
               grow, and contribute to meaningful discussions.
@@ -71,15 +72,20 @@ const About = () => {
           </div>
 
        
-                <div className="relative max-w-md mx-auto">
-                <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
-                  <img 
-                  src="/images/about-mun.png" 
-                  alt="KIIT MUN Society members during conference"
-                  className="w-full h-full object-cover"
-                  />
-                </div>
-                {/* Decorative elements */}
+          {/* Direction Aware Hover Image */}
+          <div className="relative max-w-lg mx-auto">
+            <DirectionAwareHover
+              imageUrl="/images/about-mun.png"
+              className="!aspect-square !w-full !h-full rounded-2xl shadow-lg"
+              imageClassName="w-full h-full object-cover"
+              childrenClassName="w-full h-full flex items-end p-6"
+            >
+              <div className="text-white">
+                <h4 className="text-xl font-bold mb-2">KIIT MUN Society</h4>
+                <p className="text-sm opacity-90">Building Better</p>
+              </div>
+            </DirectionAwareHover>
+            {/* Decorative elements */}
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-600 rounded-full opacity-10"></div>
             <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-secondary-600 rounded-full opacity-10"></div>
           </div>
@@ -90,7 +96,7 @@ const About = () => {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="card text-center hover:shadow-lg transition-shadow duration-300"
+              className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-6 text-center hover:bg-black/40 hover:border-white/20 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
               <div className="mb-4 flex justify-center">
                 {feature.icon}
@@ -106,22 +112,20 @@ const About = () => {
         </ScrollAnimationWrapper>
 
         {/* Statistics */}
-        <ScrollAnimationWrapper className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div>
-            <div className="text-4xl font-bold text-blue-400 mb-2">5+</div>
-            <div className="text-gray-300">Years Active</div>
-          </div>
-          <div>
-            <div className="text-4xl font-bold text-blue-400 mb-2">200+</div>
-            <div className="text-gray-300">Members</div>
-          </div>
-          <div>
-            <div className="text-4xl font-bold text-blue-400 mb-2">15+</div>
-            <div className="text-gray-300">Conferences</div>
-          </div>
-          <div>
-            <div className="text-4xl font-bold text-blue-400 mb-2">50+</div>
-            <div className="text-gray-300">Awards Won</div>
+        <ScrollAnimationWrapper className="mt-16">
+          <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-blue-400 mb-2">10+</div>
+              <div className="text-gray-300">Years Active</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-blue-400 mb-2">100+</div>
+              <div className="text-gray-300">Members</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-blue-400 mb-2">130+</div>
+              <div className="text-gray-300">Awards Won/Year</div>
+            </div>
           </div>
         </ScrollAnimationWrapper>
       </div>

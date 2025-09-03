@@ -94,7 +94,7 @@ const NewsCarousel = ({
   // Loading State
   if (loading) {
     return (
-      <div className={`w-full h-96 md:h-[500px] lg:h-[600px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center ${className}`}>
+      <div className={`w-full h-72 md:h-80 lg:h-96 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center ${className}`}>
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-primary-400 animate-spin mx-auto mb-4" />
           <p className="text-gray-300 text-lg font-medium">Loading latest updates...</p>
@@ -107,7 +107,7 @@ const NewsCarousel = ({
   // Error State
   if (error) {
     return (
-      <div className={`w-full h-96 md:h-[500px] lg:h-[600px] bg-gradient-to-br from-red-900 to-red-800 rounded-xl flex items-center justify-center ${className}`}>
+      <div className={`w-full h-72 md:h-80 lg:h-96 bg-gradient-to-br from-red-900 to-red-800 rounded-xl flex items-center justify-center ${className}`}>
         <div className="text-center max-w-md mx-auto p-6">
           <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-white mb-2">Unable to Load Updates</h3>
@@ -127,7 +127,7 @@ const NewsCarousel = ({
   // Empty State
   if (!blogs || blogs.length === 0) {
     return (
-      <div className={`w-full h-96 md:h-[500px] lg:h-[600px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center ${className}`}>
+      <div className={`w-full h-72 md:h-80 lg:h-96 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center ${className}`}>
         <div className="text-center max-w-md mx-auto p-6">
           <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
             <ExternalLink className="w-10 h-10 text-primary-400" />

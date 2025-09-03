@@ -11,7 +11,7 @@ export default function AnimatedTestimonialsDemo() {
     },
     {
       quote:
-        "The MUN conferences organized by KIIT Society provided an excellent platform to understand global issues and practice negotiation.",
+        "I believe every experience teaches us something, that’s why it’s never clear if I’m planning something big or just dancing through life",
       name: "Diya Agarwal",
       designation: "Social Media Lead",
       src: "/images/team/diya.jpg",
@@ -46,7 +46,7 @@ export default function AnimatedTestimonialsDemo() {
     },
         {
       quote:
-        "I'm intrigued by issues that google fails to highlight in it's top 20 search results and I join committees to spotlight my 3 am thoughts and concerns about the world and to channel my anger after I've watched movies like Pink and Mom. ",
+        "At 3 am , I think and argue with myself. At MUNs,  I make the committee regret that I thought.",
       name: "Rishika Choudhury",
       designation: "Curation Lead",
       src: "/images/team/rishika.jpg",

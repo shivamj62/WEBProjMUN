@@ -42,7 +42,7 @@ const Blogs = () => {
           <p className="text-sm text-gray-500">Loading news carousel...</p>        </div>
 
         {/* News Carousel */}
-        <div className="mb-12 min-h-[400px]">
+        <div className="mb-12 min-h-[300px]">
           <NewsCarousel
             maxSlides={6}
             autoPlay={true}

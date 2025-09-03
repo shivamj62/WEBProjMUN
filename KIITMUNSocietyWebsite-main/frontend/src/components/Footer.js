@@ -64,14 +64,14 @@ const Footer = () => {
               <div className="space-y-3">
                 <div className="flex items-center text-secondary-300">
                   <Mail className="w-4 h-4 mr-3 text-primary-400" />
-                  <a href="mailto:munclub@kiit.ac.in" className="hover:text-primary-400 transition-colors">
-                    munclub@kiit.ac.in
+                  <a href="mailto:societykiitmun@gmail.com" className="hover:text-primary-400 transition-colors">
+                    societykiitmun@gmail.com
                   </a>
                 </div>
                 <div className="flex items-center text-secondary-300">
                   <Phone className="w-4 h-4 mr-3 text-primary-400" />
-                  <a href="tel:+916742728637" className="hover:text-primary-400 transition-colors">
-                    +91 674 272 8637
+                  <a href="tel:+919073313566" className="hover:text-primary-400 transition-colors">
+                    +91 9073313566
                   </a>
                 </div>
                 <div className="flex items-start text-secondary-300">
@@ -118,7 +118,7 @@ const Footer = () => {
               <div className="text-secondary-300">
                 <h4 className="font-semibold mb-2">Office Hours</h4>
                 <div className="text-sm space-y-1">
-                  <div>Mon - Fri: 10:00 AM - 6:00 PM</div>
+                  <div>Mon - Fri: 10:00 AM - 4:00 PM</div>
                   <div>Saturday: 10:00 AM - 2:00 PM</div>
                   <div>Sunday: Closed</div>
                 </div>

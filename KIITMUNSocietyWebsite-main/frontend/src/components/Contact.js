@@ -98,18 +98,18 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email Us",
-      primary: "munclub@kiit.ac.in",
+      primary: "societykiitmun@gmail.com",
       secondary: "societykiitmun@gmail.com",
       description: "For general inquiries and information",
-      link: "mailto:munclub@kiit.ac.in"
+      link: "mailto:societykiitmun@gmail.com"
     },
     {
       icon: Phone,
       title: "Call Us",
-      primary: "+91 674 272 8637",
+      primary: "+91 9073313566",
       secondary: "+91 XXXXX XXXXX",
       description: "Available during office hours",
-      link: "tel:+916742728637"
+      link: "tel:+919073313566"
     },
     {
       icon: MapPin,
@@ -122,7 +122,7 @@ const Contact = () => {
     {
       icon: Clock,
       title: 'Office Hours',
-      primary: 'Monday - Friday: 10:00 AM - 6:00 PM',
+      primary: 'Monday - Friday: 10:00 AM - 4:00 PM',
       secondary: 'Saturday: 10:00 AM - 2:00 PM',
       description: 'Sunday: Closed'
     }
@@ -132,20 +132,8 @@ const Contact = () => {
     {
       name: 'Instagram',
       icon: Instagram,
-      url: 'https://instagram.com/kiitmun',
+      url: 'https://instagram.com/societykiitmun',
       color: 'bg-pink-600 hover:bg-pink-700'
-    },
-    {
-      name: 'LinkedIn',
-      icon: Linkedin,
-      url: 'https://linkedin.com/company/kiitmun',
-      color: 'bg-blue-600 hover:bg-blue-700'
-    },
-    {
-      name: 'Facebook',
-      icon: Facebook,
-      url: 'https://facebook.com/kiitmun',
-      color: 'bg-blue-800 hover:bg-blue-900'
     }
   ];
 
@@ -251,7 +239,7 @@ const Contact = () => {
               </h4>
               <div className="space-y-3">
                 <a
-                  href="mailto:munclub@kiit.ac.in"
+                  href="mailto:societykiitmun@gmail.com"
                   className="flex items-center text-primary-400 hover:text-primary-300 transition-colors"
                 >
                   <Mail className="w-4 h-4 mr-3" />
@@ -267,7 +255,7 @@ const Contact = () => {
                   <ExternalLink className="w-3 h-3 ml-2" />
                 </a>
                 <a
-                  href="https://wa.me/916742728637"
+                  href="https://wa.me/919073313566"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center text-primary-400 hover:text-primary-300 transition-colors"
@@ -298,7 +286,7 @@ const Contact = () => {
                     <div className="ml-3">
                       <h4 className="text-green-800 font-medium">Message sent successfully!</h4>
                       <p className="text-green-700 text-sm">
-                        Thank you for contacting us. We'll get back to you within 24 hours.
+                        Thank you for contacting us.
                       </p>
                     </div>
                   </div>
@@ -428,19 +416,19 @@ const Contact = () => {
 
         {/* Join MUN Community CTA */}
         <ScrollAnimationWrapper className="mt-16">
-          <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-white text-center">
+          <div className="bg-black/30 backdrop-blur-md border-2 border-red-500/50 rounded-2xl p-8 text-white text-center shadow-2xl shadow-red-500/20 hover:border-red-400/70 hover:shadow-red-500/30 transition-all duration-300">
             <h3 className="text-3xl font-serif font-bold mb-4">
               Join the MUN Community
             </h3>
-            <p className="text-xl mb-6 text-primary-100 max-w-2xl mx-auto">
+            <p className="text-xl mb-6 text-gray-200 max-w-2xl mx-auto">
               Interested in becoming a member? Learn more about our society and how you can get involved 
               in Model United Nations activities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#about" className="btn-ghost border border-gray-300 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-gray-500">
+              <a href="#about" className="bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20 hover:border-white/50 px-6 py-3 rounded-lg font-semibold transition-all duration-300">
                 Learn More About Us
               </a>
-              <a href="/auth/register" className="btn-ghost border border-white text-white hover:bg-white hover:text-primary-600">
+              <a href="/auth/register" className="bg-red-500/80 backdrop-blur-sm border border-red-400/50 text-white hover:bg-red-400/90 hover:border-red-300/70 px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-red-500/25">
                 Become a Member
               </a>
             </div>

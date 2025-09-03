@@ -39,3 +39,17 @@ GET /admin/blogs called - page=1, limit=10, search=None
 GET /admin/blogs called - page=1, limit=10, search=None
 GET /admin/blogs called - page=1, limit=10, search=None
 GET /admin/blogs called - page=1, limit=10, search=None
+GET /admin/blogs called - page=1, limit=10, search=None
+GET /admin/blogs called - page=1, limit=10, search=None
+GET /admin/members called - page=1, limit=10, search=None
+GET /admin/members called - page=1, limit=10, search=None
+GET /admin/members called - page=1, limit=10, search=None
+GET /admin/members called - page=1, limit=10, search=None
+PUT /admin/members/2 called
+Update data: email='societykiitmun@gmail.com' name='Micah Bell' role='admin' password=None
+SUCCESS: Member 2 updated successfully
+GET /admin/members called - page=1, limit=10, search=None
+GET /admin/members called - page=1, limit=10, search=None
+GET /admin/members called - page=1, limit=10, search=None
+GET /admin/blogs called - page=1, limit=10, search=None
+GET /admin/blogs called - page=1, limit=10, search=None

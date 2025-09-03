@@ -1,36 +1,76 @@
-'use client';
+"use client";
+import {
+  Navbar,
+  NavBody,
+  NavItems,
+  MobileNav,
+  NavbarButton,
+  MobileNavHeader,
+  MobileNavToggle,
+  MobileNavMenu,
+} from "@/components/ui/resizable-navbar";
+import { useState } from "react";
+import { User, LogOut, UserPlus } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
+import Image from "next/image";
+import RegistrationModal from "./RegistrationModal";
 
-import { useState } from 'react';
-import { Menu, X, User, LogOut, UserPlus } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import Link from 'next/link';
-import Image from 'next/image';
-import RegistrationModal from './RegistrationModal';
+// Custom MUN Society Logo Component
+const MUNSocietyLogo = () => {
+  return (
+    <Link href="/" className="relative z-20 mr-4 flex items-center space-x-3 px-2 py-1 text-sm font-normal text-black group">
+      {/* Desktop Logo */}
+      <div className="hidden sm:block">
+        <Image
+          src="/images/logo/kiit-mun-logo.png"
+          alt="KIIT MUN Society - Model United Nations"
+          width={200}
+          height={60}
+          priority
+          className="h-10 w-auto object-contain group-hover:opacity-90 transition-opacity duration-200"
+        />
+      </div>
+      
+      {/* Mobile Logo */}
+      <div className="block sm:hidden">
+        <Image
+          src="/images/logo/kiit-mun-logo.png"
+          alt="KIIT MUN Society"
+          width={150}
+          height={45}
+          priority
+          className="h-8 w-auto object-contain group-hover:opacity-90 transition-opacity duration-200"
+        />
+      </div>
+    </Link>
+  );
+};
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Header() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/#about' },
-    { name: 'Team', href: '/#team' },
+    { name: "Home", link: "/" },
+    { name: "About", link: "/#about" },
+    { name: "Team", link: "/#team" },
     { 
-      name: 'Resources', 
-      href: isAuthenticated ? '/resources-dashboard' : '/auth/login?redirect=resources'
+      name: "Resources", 
+      link: isAuthenticated ? "/resources-dashboard" : "/auth/login?redirect=resources"
     },
-    { name: 'Contact', href: '/#contact' },
+    { name: "Contact", link: "/#contact" },
   ];
 
   const handleLogout = () => {
     logout();
-    setIsMenuOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   const openRegistrationModal = () => {
     setIsRegistrationModalOpen(true);
-    setIsMenuOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   const closeRegistrationModal = () => {
@@ -38,212 +78,187 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md shadow-sm border-b border-gray-800">
-      <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            {/* Desktop Logo */}
-            <div className="hidden sm:block">
-              <Image
-                src="/images/logo/kiit-mun-logo.png"
-                alt="KIIT MUN Society - Model United Nations"
-                width={200}
-                height={60}
-                priority
-                className="h-12 w-auto object-contain group-hover:opacity-90 transition-opacity duration-200"
-              />
-            </div>
-            
-            {/* Mobile Logo */}
-            <div className="block sm:hidden">
-              <Image
-                src="/images/logo/kiit-mun-logo.png"
-                alt="KIIT MUN Society"
-                width={150}
-                height={45}
-                priority
-                className="h-8 w-auto object-contain group-hover:opacity-90 transition-opacity duration-200"
-              />
-            </div>
-          </Link>
-
+    <>
+      <div className="relative w-full">
+        <Navbar className="fixed top-0">
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-300 hover:text-primary-400 font-medium transition-colors duration-200"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <NavBody>
+            <MUNSocietyLogo />
+            <NavItems 
+              items={navigation} 
+              className="text-gray-200 hover:text-white text-sm"
+              onItemClick={() => {}} // Add empty handler to prevent issues
+            />
             
-            {/* Auth Section */}
-            <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-600">
+            {/* Desktop Auth Section */}
+            <div className="flex items-center gap-2 ml-4">
               {isAuthenticated && user ? (
-                <div className="flex items-center space-x-4">
+                <>
                   {/* Registration Button for Authenticated Users */}
-                  <button
+                  <NavbarButton
+                    variant="secondary"
                     onClick={openRegistrationModal}
-                    className="btn-ghost flex items-center space-x-2 text-primary-400 hover:text-primary-300 font-medium transition-colors"
+                    className="hidden xl:flex items-center space-x-2 text-blue-300 hover:text-blue-200 bg-transparent text-xs px-3 py-1"
                   >
-                    <UserPlus className="w-4 h-4" />
-                    <span>Register for MUN</span>
-                  </button>
+                    <UserPlus className="w-3 h-3" />
+                    <span>Register MUN</span>
+                  </NavbarButton>
                   
-                  {/* Admin Panel Button for Authenticated Admins */}
+                  {/* Admin Panel Button */}
                   {(user.role === 'admin' || user.role === 'administrator') && (
-                    <Link 
+                    <NavbarButton
+                      variant="secondary"
                       href="/admin"
-                      className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                      className="text-purple-300 hover:text-purple-200 bg-transparent text-xs px-3 py-1"
                     >
-                      <span>Admin Panel</span>
-                    </Link>
+                      Admin
+                    </NavbarButton>
                   )}
                   
-                  <span className="flex items-center space-x-2 text-secondary-700">
-                    <User className="w-4 h-4" />
+                  <span className="hidden xl:flex items-center space-x-2 text-gray-200 text-xs">
+                    <User className="w-3 h-3" />
                     <span className="font-medium">{user.full_name || user.name}</span>
                   </span>
-                  <button
+                  
+                  <NavbarButton
+                    variant="secondary"
                     onClick={handleLogout}
-                    className="btn-ghost flex items-center space-x-2 text-secondary-700 hover:text-red-600 transition-colors"
+                    className="flex items-center space-x-2 text-red-300 hover:text-red-200 bg-transparent text-xs px-3 py-1"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-3 h-3" />
                     <span>Logout</span>
-                  </button>
-                </div>
+                  </NavbarButton>
+                </>
               ) : (
-                <div className="flex items-center space-x-3">
-                  {/* Admin Login Button - Always visible when logged out */}
-                  <Link 
+                <>
+                  <NavbarButton
+                    variant="secondary"
                     href="/auth/admin-login"
-                    className="text-red-600 hover:text-red-700 font-medium transition-colors"
+                    className="text-red-300 hover:text-red-200 bg-transparent text-xs px-3 py-1"
                   >
-                    Admin Login
-                  </Link>
-                  <Link 
+                    Admin
+                  </NavbarButton>
+                  <NavbarButton
+                    variant="secondary"
                     href="/auth/login"
-                    className="text-secondary-700 hover:text-primary-600 font-medium transition-colors"
+                    className="text-gray-200 hover:text-white bg-transparent text-xs px-3 py-1"
                   >
-                    Member Login
-                  </Link>
-                  <Link
+                    Login
+                  </NavbarButton>
+                  <NavbarButton
+                    variant="primary"
                     href="/auth/register"
-                    className="btn-ghost text-sm px-4 py-2"
+                    className="bg-blue-500/80 hover:bg-blue-400/90 text-white text-xs px-3 py-1"
                   >
                     Join Us
-                  </Link>
-                </div>
+                  </NavbarButton>
+                </>
               )}
             </div>
-          </nav>
+          </NavBody>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="btn-ghost md:hidden p-2 rounded-lg hover:bg-secondary-100"
-          >
-            {isMenuOpen ? (
-              <X className="w-6 h-6 text-secondary-700" />
-            ) : (
-              <Menu className="w-6 h-6 text-secondary-700" />
-            )}
-          </button>
-        </div>
+          {/* Mobile Navigation */}
+          <MobileNav>
+            <MobileNavHeader>
+              <MUNSocietyLogo />
+              <MobileNavToggle
+                isOpen={isMobileMenuOpen}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              />
+            </MobileNavHeader>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-secondary-200">
-            <nav className="flex flex-col space-y-2">
-              {navigation.map((item) => (
+            <MobileNavMenu
+              isOpen={isMobileMenuOpen}
+              onClose={() => setIsMobileMenuOpen(false)}
+            >
+              {navigation.map((item, idx) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
-                  className="px-4 py-2 text-secondary-700 hover:text-primary-600 hover:bg-secondary-50 rounded-lg transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
+                  key={`mobile-link-${idx}`}
+                  href={item.link}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="relative text-gray-200 hover:text-blue-300 transition-colors duration-200"
                 >
-                  {item.name}
+                  <span className="block font-medium">{item.name}</span>
                 </Link>
               ))}
               
               {/* Mobile Auth Section */}
-              <div className="px-4 py-2 border-t border-secondary-200 mt-2 pt-4">
+              <div className="flex w-full flex-col gap-4 mt-6 pt-6 border-t border-gray-700">
                 {isAuthenticated && user ? (
-                  <div className="space-y-2">
-                    {/* Registration Button for Mobile */}
-                    <button
+                  <>
+                    <NavbarButton
                       onClick={openRegistrationModal}
-                      className="block w-full text-left py-2 text-primary-600 hover:text-primary-700 font-medium"
+                      variant="secondary"
+                      className="w-full text-blue-300 hover:text-blue-200 bg-transparent"
                     >
-                      <UserPlus className="w-4 h-4 inline mr-2" />
+                      <UserPlus className="w-4 h-4 mr-2" />
                       Register for MUN
-                    </button>
+                    </NavbarButton>
                     
-                    {/* Admin Panel for Mobile */}
                     {(user.role === 'admin' || user.role === 'administrator') && (
-                      <Link 
+                      <NavbarButton
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        variant="secondary"
                         href="/admin"
-                        className="block py-2 text-purple-600 hover:text-purple-700 font-medium"
-                        onClick={() => setIsMenuOpen(false)}
+                        className="w-full text-purple-300 hover:text-purple-200 bg-transparent"
                       >
                         Admin Panel
-                      </Link>
+                      </NavbarButton>
                     )}
                     
-                    <div className="flex items-center space-x-2 text-secondary-700 py-2">
+                    <div className="flex items-center space-x-2 text-gray-300 px-4 py-2">
                       <User className="w-4 h-4" />
                       <span>{user.full_name || user.name}</span>
                     </div>
-                    <button
+                    
+                    <NavbarButton
                       onClick={handleLogout}
-                      className="btn-ghost flex items-center space-x-2 text-secondary-700 hover:text-red-600 py-2"
+                      variant="secondary"
+                      className="w-full text-red-300 hover:text-red-200 bg-transparent"
                     >
-                      <LogOut className="w-4 h-4" />
-                      <span>Logout</span>
-                    </button>
-                  </div>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </NavbarButton>
+                  </>
                 ) : (
-                  <div className="space-y-2">
-                    {/* Admin Login Button for Mobile */}
-                    <Link 
+                  <>
+                    <NavbarButton
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      variant="secondary"
                       href="/auth/admin-login"
-                      className="block py-2 text-red-600 hover:text-red-700 font-medium"
-                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full text-red-300 hover:text-red-200 bg-transparent"
                     >
                       Admin Login
-                    </Link>
-                    <Link 
+                    </NavbarButton>
+                    <NavbarButton
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      variant="secondary"
                       href="/auth/login"
-                      className="block py-2 text-secondary-700 hover:text-primary-600"
-                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full text-gray-200 hover:text-white bg-transparent"
                     >
                       Member Login
-                    </Link>
-                    <Link 
+                    </NavbarButton>
+                    <NavbarButton
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      variant="primary"
                       href="/auth/register"
-                      className="block py-2 text-primary-600 font-medium"
-                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full bg-blue-500/80 hover:bg-blue-400/90 text-white"
                     >
                       Join Our Society
-                    </Link>
-                  </div>
+                    </NavbarButton>
+                  </>
                 )}
               </div>
-            </nav>
-          </div>
-        )}
+            </MobileNavMenu>
+          </MobileNav>
+        </Navbar>
       </div>
-      
+
       {/* Registration Modal */}
       <RegistrationModal 
         isOpen={isRegistrationModalOpen} 
         onClose={closeRegistrationModal} 
       />
-    </header>
+    </>
   );
-};
-
-export default Header;
+}

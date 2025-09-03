@@ -123,7 +123,7 @@ const Coordinators = () => {
           {/* Team Stats */}
           <div className="mt-8 text-center">
             <p className="text-gray-400 text-sm">
-              Meet our {teamMembers.length} dedicated coordinators
+              Meet our Core
               <span className="text-blue-400 font-medium"> • Leading with passion and expertise</span>
             </p>
           </div>

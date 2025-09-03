@@ -11,7 +11,7 @@ const Hero = () => {
   const carouselImages = [
     {
       id: 1,
-      title: "KIIT Model United Nations",
+      title: "KIIT Model United Nations Society",
       subtitle: "Empowering Future Diplomats",
       description: "Join us in exploring global issues and developing diplomatic skills through engaging simulations.",
       imageUrl: "/images/hero/hero-1.jpg"
@@ -61,16 +61,6 @@ const Hero = () => {
 
   return (
     <section id="home" className="relative h-screen overflow-hidden">
-      {/* Hero Background Image - Below ripple effect */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src="/images/herobgimg.png"
-          alt="KIIT MUN Hero Background"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-      
       {/* Background Ripple Effect */}
       <BackgroundRippleEffect 
         cellSize={35}
@@ -146,21 +136,6 @@ const Hero = () => {
             <ChevronRight className="w-6 h-6 text-white" />
           </button>
         </>
-      )}
-
-      {/* Slide Indicators */}
-      {carouselImages.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-40 flex space-x-2">
-          {carouselImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`btn-ghost w-3 h-3 rounded-full transition-colors ${
-                index === currentSlide ? 'bg-white' : 'bg-white/50'
-              }`}
-            />
-          ))}
-        </div>
       )}
     </section>
   );
