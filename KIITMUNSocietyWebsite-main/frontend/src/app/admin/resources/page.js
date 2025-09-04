@@ -155,18 +155,33 @@ const ResourcesManagement = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/resources/${editingResource.id}`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          title: editForm.title,
-          description: editForm.description
-        })
+      console.log('🔄 Starting resource update...', {
+        id: editingResource.id,
+        title: editForm.title,
+        description: editForm.description
       });
 
+      // Create FormData instead of JSON
+      const formData = new FormData();
+      formData.append('title', editForm.title);
+      formData.append('description', editForm.description);
+
+      const response = await fetch(`${API_BASE}/api/resources/${editingResource.id}`, {
+        method: 'PUT',
+        headers: getAuthHeadersForUpload(), // Use upload headers (no Content-Type)
+        body: formData // Send FormData instead of JSON
+      });
+
+      console.log('🔄 Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ Update error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
+
+      const result = await response.json();
+      console.log('✅ Update successful:', result);
 
       setShowEditModal(false);
       setEditingResource(null);
@@ -174,7 +189,7 @@ const ResourcesManagement = () => {
       fetchResources();
       alert('Resource updated successfully!');
     } catch (error) {
-      console.error('Error updating resource:', error);
+      console.error('❌ Error updating resource:', error);
       alert(`Update failed: ${error.message}`);
     }
   };
@@ -184,19 +199,28 @@ const ResourcesManagement = () => {
     if (!confirm('Are you sure you want to delete this resource?')) return;
 
     try {
+      console.log('🗑️ Starting resource deletion...', { id: resourceId });
+
       const response = await fetch(`${API_BASE}/api/resources/${resourceId}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
 
+      console.log('🗑️ Delete response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ Delete error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
 
-      fetchResources();
+      const result = await response.json();
+      console.log('✅ Delete successful:', result);
+
+      fetchResources(); // Refresh the list
       alert('Resource deleted successfully!');
     } catch (error) {
-      console.error('Error deleting resource:', error);
+      console.error('❌ Error deleting resource:', error);
       alert(`Delete failed: ${error.message}`);
     }
   };

@@ -299,13 +299,19 @@ async def update_resource(
     admin_user: dict = Depends(require_admin)
 ):
     """Update resource metadata (Admin only)"""
+    print(f"🔄 UPDATE REQUEST: resource_id={resource_id}, title={title}, description={description}")
+    print(f"🔄 ADMIN USER: {admin_user.get('email', 'unknown')}")
+    
     from ..database import get_db
     db = await get_db()
     
     # Check if resource exists
     resource = await db.fetchone("SELECT id, title FROM resources WHERE id = ? AND is_active = 1", (resource_id,))
     if not resource:
+        print(f"❌ Resource {resource_id} not found")
         raise HTTPException(status_code=404, detail="Resource not found")
+    
+    print(f"✅ Found resource: {resource}")
     
     # Build update query
     updates = []
@@ -315,24 +321,31 @@ async def update_resource(
         # Check if new title conflicts with existing resources
         existing = await db.fetchone("SELECT id FROM resources WHERE title = ? AND id != ? AND is_active = 1", (title, resource_id))
         if existing:
+            print(f"❌ Title conflict: {title}")
             raise HTTPException(status_code=409, detail="A resource with this title already exists")
         updates.append("title = ?")
         params.append(title)
+        print(f"✅ Will update title to: {title}")
     
     if description is not None:  # Allow empty string
         updates.append("description = ?")
         params.append(description)
+        print(f"✅ Will update description to: {description}")
     
     if not updates:
+        print("ℹ️ No changes to update")
         return SuccessResponse(success=True, message="No changes to update")
     
-    # Add last_modified update
-    updates.append("created_at = CURRENT_TIMESTAMP")  # Using created_at as last_modified
+    # Execute update - FIX: Don't add created_at update and fix params order
     params.append(resource_id)
-    
-    # Execute update
     query = f"UPDATE resources SET {', '.join(updates)} WHERE id = ?"
-    await db.execute(query, params)
+    
+    print(f"🔄 EXECUTING UPDATE: {query}")
+    print(f"🔄 WITH PARAMS: {params}")
+    
+    result = await db.execute(query, params)
+    
+    print(f"✅ UPDATE COMPLETED")
     
     return SuccessResponse(
         success=True,
@@ -345,6 +358,9 @@ async def delete_resource(
     admin_user: dict = Depends(require_admin)
 ):
     """Delete resource file (Admin only) - Soft delete"""
+    print(f"🗑️ DELETE REQUEST: resource_id={resource_id}")
+    print(f"🗑️ ADMIN USER: {admin_user.get('email', 'unknown')}")
+    
     from ..database import get_db
     db = await get_db()
     
@@ -355,10 +371,16 @@ async def delete_resource(
     )
     
     if not resource or not resource[2]:  # Check if exists and is active
+        print(f"❌ Resource {resource_id} not found or inactive")
         raise HTTPException(status_code=404, detail="Resource not found")
     
+    print(f"✅ Found resource: {resource[1]}")
+    
     # Soft delete - mark as inactive
-    await db.execute("UPDATE resources SET is_active = 0 WHERE id = ?", (resource_id,))
+    print(f"🔄 EXECUTING SOFT DELETE")
+    result = await db.execute("UPDATE resources SET is_active = 0 WHERE id = ?", (resource_id,))
+    
+    print(f"✅ DELETE COMPLETED")
     
     title = resource[1]
     

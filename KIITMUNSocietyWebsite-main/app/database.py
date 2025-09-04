@@ -42,10 +42,17 @@ class TursoDatabase:
     async def execute(self, query: str, params: Optional[Tuple] = None) -> Any:
         """Execute a query (INSERT, UPDATE, DELETE)"""
         try:
+            logger.info(f"🔄 EXECUTING QUERY: {query}")
+            logger.info(f"🔄 WITH PARAMS: {params}")
+            
             if params:
                 result = await self.client.execute(query, params)
             else:
                 result = await self.client.execute(query)
+            
+            logger.info(f"✅ QUERY EXECUTED SUCCESSFULLY")
+            logger.info(f"✅ AFFECTED ROWS: {getattr(result, 'changes', 'unknown')}")
+            
             return result
         except Exception as e:
             logger.error(f"❌ Error executing query: {e}")
