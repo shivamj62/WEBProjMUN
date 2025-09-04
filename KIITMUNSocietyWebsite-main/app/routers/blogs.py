@@ -439,9 +439,11 @@ async def update_blog(
         
         if competition_date is not None:
             try:
+                # Validate the date format
                 parsed_date = datetime.strptime(competition_date, "%Y-%m-%d").date()
                 update_fields.append("competition_date = ?")
-                update_values.append(parsed_date)
+                # Convert date object to string for Turso compatibility
+                update_values.append(parsed_date.isoformat())
             except ValueError:
                 raise HTTPException(status_code=400, detail="Invalid competition_date format. Use YYYY-MM-DD")
         
@@ -463,7 +465,8 @@ async def update_blog(
         
         # Add updated_at
         update_fields.append("updated_at = ?")
-        update_values.append(datetime.now())
+        # Convert datetime object to ISO string for Turso compatibility
+        update_values.append(datetime.now().isoformat())
         
         # Execute update
         update_values.append(blog_id)

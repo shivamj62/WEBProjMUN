@@ -42,11 +42,18 @@ class TursoDatabase:
     async def execute(self, query: str, params: Optional[Tuple] = None) -> Any:
         """Execute a query (INSERT, UPDATE, DELETE)"""
         try:
-            logger.info(f"🔄 EXECUTING QUERY: {query}")
-            logger.info(f"🔄 WITH PARAMS: {params}")
+            # Import here to avoid circular imports
+            from .db_utils import serialize_params_for_turso
             
-            if params:
-                result = await self.client.execute(query, params)
+            # Serialize parameters for Turso compatibility
+            safe_params = serialize_params_for_turso(params)
+            
+            logger.info(f"🔄 EXECUTING QUERY: {query}")
+            logger.info(f"🔄 ORIGINAL PARAMS: {params}")
+            logger.info(f"🔄 SERIALIZED PARAMS: {safe_params}")
+            
+            if safe_params:
+                result = await self.client.execute(query, safe_params)
             else:
                 result = await self.client.execute(query)
             
@@ -57,14 +64,21 @@ class TursoDatabase:
         except Exception as e:
             logger.error(f"❌ Error executing query: {e}")
             logger.error(f"❌ Query: {query}")
-            logger.error(f"❌ Params: {params}")
+            logger.error(f"❌ Original Params: {params}")
+            logger.error(f"❌ Serialized Params: {serialize_params_for_turso(params) if params else None}")
             raise
     
     async def execute_with_lastrowid(self, query: str, params: Optional[Tuple] = None) -> int:
         """Execute a query and return the last row ID"""
         try:
-            if params:
-                result = await self.client.execute(query, params)
+            # Import here to avoid circular imports
+            from .db_utils import serialize_params_for_turso
+            
+            # Serialize parameters for Turso compatibility
+            safe_params = serialize_params_for_turso(params)
+            
+            if safe_params:
+                result = await self.client.execute(query, safe_params)
             else:
                 result = await self.client.execute(query)
             
@@ -73,14 +87,21 @@ class TursoDatabase:
         except Exception as e:
             logger.error(f"❌ Error executing query with lastrowid: {e}")
             logger.error(f"❌ Query: {query}")
-            logger.error(f"❌ Params: {params}")
+            logger.error(f"❌ Original Params: {params}")
+            logger.error(f"❌ Serialized Params: {serialize_params_for_turso(params) if params else None}")
             raise
     
     async def fetchone(self, query: str, params: Optional[Tuple] = None) -> Optional[Tuple]:
         """Fetch one row from query result"""
         try:
-            if params:
-                result = await self.client.execute(query, params)
+            # Import here to avoid circular imports
+            from .db_utils import serialize_params_for_turso
+            
+            # Serialize parameters for Turso compatibility
+            safe_params = serialize_params_for_turso(params)
+            
+            if safe_params:
+                result = await self.client.execute(query, safe_params)
             else:
                 result = await self.client.execute(query)
             
@@ -89,19 +110,29 @@ class TursoDatabase:
             return None
         except Exception as e:
             logger.error(f"❌ Error fetching one row: {e}")
+            logger.error(f"❌ Query: {query}")
+            logger.error(f"❌ Original Params: {params}")
             raise
-    
+
     async def fetchall(self, query: str, params: Optional[Tuple] = None) -> List[Tuple]:
         """Fetch all rows from query result"""
         try:
-            if params:
-                result = await self.client.execute(query, params)
+            # Import here to avoid circular imports
+            from .db_utils import serialize_params_for_turso
+            
+            # Serialize parameters for Turso compatibility
+            safe_params = serialize_params_for_turso(params)
+            
+            if safe_params:
+                result = await self.client.execute(query, safe_params)
             else:
                 result = await self.client.execute(query)
             
             return result.rows if result.rows else []
         except Exception as e:
             logger.error(f"❌ Error fetching all rows: {e}")
+            logger.error(f"❌ Query: {query}")
+            logger.error(f"❌ Original Params: {params}")
             raise
     
     async def commit(self):
