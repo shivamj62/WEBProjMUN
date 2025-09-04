@@ -94,9 +94,17 @@ print("=== DEBUG MIDDLEWARE ADDED ===")
 
 # Create upload directories
 UPLOAD_PATH = os.getenv("UPLOAD_PATH", "./uploads")
+# Ensure upload path is absolute for production
+if not os.path.isabs(UPLOAD_PATH):
+    UPLOAD_PATH = os.path.abspath(UPLOAD_PATH)
+
 os.makedirs(os.path.join(UPLOAD_PATH, "images"), exist_ok=True)
 os.makedirs(os.path.join(UPLOAD_PATH, "resources"), exist_ok=True)
 os.makedirs(os.path.join(UPLOAD_PATH, "carousel"), exist_ok=True)
+
+print(f"🗂️ Upload path: {UPLOAD_PATH}")
+print(f"🗂️ Images path: {os.path.join(UPLOAD_PATH, 'images')}")
+print(f"🗂️ Resources path: {os.path.join(UPLOAD_PATH, 'resources')}")
 
 # Mount static files for blog images (public access)
 app.mount("/uploads/images", StaticFiles(directory=os.path.join(UPLOAD_PATH, "images")), name="blog_images")

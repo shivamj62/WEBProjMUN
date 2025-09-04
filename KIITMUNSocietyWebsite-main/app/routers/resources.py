@@ -246,6 +246,8 @@ async def download_resource(
     user: dict = Depends(get_current_user)
 ):
     """Download specific resource file"""
+    print(f"🔽 Download request for resource {resource_id} by user {user.get('email', 'unknown')}")
+    
     from ..database import get_db
     db = await get_db()
     
@@ -258,13 +260,21 @@ async def download_resource(
     resource = await db.fetchone(query, (resource_id,))
     
     if not resource:
+        print(f"❌ Resource {resource_id} not found in database")
         raise HTTPException(status_code=404, detail="Resource not found")
     
     file_path = resource[2]  # file_path
     original_filename = resource[1]  # original_filename
     mime_type = resource[3]  # mime_type
     
+    print(f"📁 Looking for file at: {file_path}")
+    print(f"📄 Original filename: {original_filename}")
+    print(f"🎯 MIME type: {mime_type}")
+    
     if not os.path.exists(file_path):
+        print(f"❌ File not found on disk: {file_path}")
+        print(f"📂 Current working directory: {os.getcwd()}")
+        print(f"📂 Upload path from env: {os.getenv('UPLOAD_PATH', './uploads')}")
         raise HTTPException(status_code=404, detail="File not found on disk")
     
     # Increment download count
@@ -273,6 +283,7 @@ async def download_resource(
         (resource_id,)
     )
     
+    print(f"✅ Serving file: {file_path}")
     return FileResponse(
         path=file_path,
         filename=original_filename,
