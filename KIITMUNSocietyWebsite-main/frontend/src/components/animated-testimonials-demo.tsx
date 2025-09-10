@@ -4,7 +4,7 @@ export default function AnimatedTestimonialsDemo() {
   const testimonials = [
     {
       quote:
-        "On wednesdays, we wear pink",
+        "On wednesdays, we wear pink.",
       name: "Aastha Vij",
       designation: "Social Media Lead",
       src: "/images/team/aastha.jpg",
@@ -25,7 +25,7 @@ export default function AnimatedTestimonialsDemo() {
     },
     {
       quote:
-        "The leadership and organization of KIIT MUN events are outstanding. It's a great opportunity for networking and learning.",
+        "No legacy is so rich as honesty.",
       name: "Dev Pathak",
       designation: "Events and Sessions Lead",
       src: "/images/team/dev.jpg",
@@ -39,7 +39,7 @@ export default function AnimatedTestimonialsDemo() {
     },
         {
       quote:
-        "Thanks to KIIT MUN, I've developed a deeper understanding of international relations and conflict resolution.",
+        "Sometimes, I feel I’m super smart. Other times, I have to sing the ABCs in my head to remember which letter comes next.",
       name: "Neeti Jha",
       designation: "Curation lead",
       src: "/images/team/neeti.jpg",

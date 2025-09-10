@@ -118,6 +118,10 @@ const Coordinators = () => {
           <FocusCards
             cards={cards}
             onCardClick={handleCardClick}
+            showControls={true}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            cardsPerView={3}
           />
 
           {/* Team Stats */}
