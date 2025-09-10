@@ -105,7 +105,8 @@ export default function ResizableHeader() {
                   </NavbarButton>
                   
                   {/* Admin Panel Button */}
-                  {(user.role === 'admin' || user.role === 'administrator') && (
+                  {/* Admin Panel button hidden - accessible via direct URL */}
+                  {/* {(user.role === 'admin' || user.role === 'administrator') && (
                     <NavbarButton
                       variant="secondary"
                       href="/admin"
@@ -113,7 +114,7 @@ export default function ResizableHeader() {
                     >
                       Admin
                     </NavbarButton>
-                  )}
+                  )} */}
                   
                   <span className="hidden xl:flex items-center space-x-2 text-gray-200 text-xs">
                     <User className="w-3 h-3" />
@@ -131,13 +132,14 @@ export default function ResizableHeader() {
                 </>
               ) : (
                 <>
-                  <NavbarButton
+                  {/* Admin Login button hidden - accessible via direct URL */}
+                  {/* <NavbarButton
                     variant="secondary"
                     href="/auth/admin-login"
                     className="text-red-300 hover:text-red-200 bg-transparent text-xs px-3 py-1"
                   >
                     Admin
-                  </NavbarButton>
+                  </NavbarButton> */}
                   <NavbarButton
                     variant="secondary"
                     href="/auth/login"
@@ -195,7 +197,8 @@ export default function ResizableHeader() {
                       Register for MUN
                     </NavbarButton>
                     
-                    {(user.role === 'admin' || user.role === 'administrator') && (
+                    {/* Admin Panel button hidden - accessible via direct URL */}
+                    {/* {(user.role === 'admin' || user.role === 'administrator') && (
                       <NavbarButton
                         onClick={() => setIsMobileMenuOpen(false)}
                         variant="secondary"
@@ -204,7 +207,7 @@ export default function ResizableHeader() {
                       >
                         Admin Panel
                       </NavbarButton>
-                    )}
+                    )} */}
                     
                     <div className="flex items-center space-x-2 text-gray-300 px-4 py-2">
                       <User className="w-4 h-4" />
@@ -222,14 +225,15 @@ export default function ResizableHeader() {
                   </>
                 ) : (
                   <>
-                    <NavbarButton
+                    {/* Admin Login button hidden - accessible via direct URL */}
+                    {/* <NavbarButton
                       onClick={() => setIsMobileMenuOpen(false)}
                       variant="secondary"
                       href="/auth/admin-login"
                       className="w-full text-red-300 hover:text-red-200 bg-transparent"
                     >
                       Admin Login
-                    </NavbarButton>
+                    </NavbarButton> */}
                     <NavbarButton
                       onClick={() => setIsMobileMenuOpen(false)}
                       variant="secondary"
