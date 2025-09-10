@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Q
 from typing import List, Optional
 import os
 import uuid
+import base64
+import traceback
 from datetime import datetime
-import aiofiles
 
 from app.schemas import Blog, BlogList
 from app.auth import require_admin
@@ -16,7 +17,7 @@ MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 
 async def save_image_file(file: UploadFile) -> Optional[str]:
-    """Save uploaded image file and return filename"""
+    """Convert uploaded image file to base64 data URL and return it"""
     try:
         print(f"🔍 Starting save_image_file for: {file.filename}")
         
@@ -32,15 +33,6 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
             print(f"❌ Invalid file extension: {file_ext}. Allowed: {ALLOWED_EXTENSIONS}")
             return None
         
-        # Create unique filename
-        unique_filename = f"blog_image_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}{file_ext}"
-        file_path = os.path.join(UPLOAD_DIR, unique_filename)
-        print(f"🔍 Will save to: {file_path}")
-        
-        # Ensure upload directory exists
-        os.makedirs(UPLOAD_DIR, exist_ok=True)
-        print(f"🔍 Upload directory exists: {os.path.exists(UPLOAD_DIR)}")
-        
         # Read file content
         print(f"🔍 Reading file content...")
         content = await file.read()
@@ -54,24 +46,28 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
             print(f"❌ File too large: {len(content)} > {MAX_FILE_SIZE}")
             return None
         
-        # Write file using regular file operations
-        print(f"🔍 Writing file to disk...")
-        with open(file_path, 'wb') as f:
-            f.write(content)
+        # Convert to base64
+        print(f"🔍 Converting to base64...")
+        base64_content = base64.b64encode(content).decode('utf-8')
         
-        print(f"🔍 Checking if file was written...")
-        if os.path.exists(file_path):
-            saved_size = os.path.getsize(file_path)
-            print(f"✅ File saved successfully: {unique_filename} ({saved_size} bytes)")
-            return unique_filename
-        else:
-            print(f"❌ File was not saved to disk")
-            return None
+        # Create data URL with proper MIME type
+        mime_type_map = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg', 
+            '.png': 'image/png',
+            '.gif': 'image/gif',
+            '.webp': 'image/webp'
+        }
+        
+        mime_type = mime_type_map.get(file_ext, 'image/jpeg')
+        data_url = f"data:{mime_type};base64,{base64_content}"
+        
+        print(f"✅ Image converted to base64 data URL (length: {len(data_url)})")
+        return data_url
         
     except Exception as e:
         print(f"❌ Error in save_image_file: {str(e)}")
         print(f"❌ Error type: {type(e)}")
-        import traceback
         traceback.print_exc()
         return None
 
@@ -108,8 +104,8 @@ async def get_blogs(
                     "title": blog[1],
                     "content": blog[2],
                     "competition_date": blog[3],
-                    "image1_url": f"/uploads/images/{blog[4]}" if blog[4] else None,
-                    "image2_url": f"/uploads/images/{blog[5]}" if blog[5] else None,
+                    "image1_url": blog[4] if blog[4] else None,  # Store data URL directly
+                    "image2_url": blog[5] if blog[5] else None,  # Store data URL directly
                     "created_at": blog[6],
                     "updated_at": blog[7],
                     "author": "Admin",
@@ -163,8 +159,8 @@ async def get_blog(blog_id: int):
             "title": blog[1],
             "content": blog[2],
             "competition_date": blog[3],
-            "image1_url": f"/uploads/images/{blog[4]}" if blog[4] else None,
-            "image2_url": f"/uploads/images/{blog[5]}" if blog[5] else None,
+            "image1_url": blog[4] if blog[4] else None,  # Store data URL directly
+            "image2_url": blog[5] if blog[5] else None,  # Store data URL directly
             "created_at": blog[6],
             "updated_at": blog[7],
             "author": "Admin",
@@ -240,8 +236,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 raise HTTPException(status_code=400, detail="Invalid competition_date format. Use YYYY-MM-DD")
         
         # Handle image uploads
-        image1_filename = None
-        image2_filename = None
+        image1_data_url = None
+        image2_data_url = None
         
         print(f"📝 Starting image processing...")
         
@@ -251,11 +247,11 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 print(f"📝 Image1 content type: {image1.content_type}")
                 print(f"📝 Image1 size: {image1.size if hasattr(image1, 'size') else 'unknown'}")
                 
-                image1_filename = await save_image_file(image1)
-                if not image1_filename:
-                    print(f"❌ Failed to save image1: {image1.filename}")
+                image1_data_url = await save_image_file(image1)
+                if not image1_data_url:
+                    print(f"❌ Failed to convert image1: {image1.filename}")
                     raise HTTPException(status_code=400, detail="Invalid image1 file type or size")
-                print(f"✅ Image1 saved as: {image1_filename}")
+                print(f"✅ Image1 converted to data URL (length: {len(image1_data_url)})")
             else:
                 print(f"📝 No image1 provided")
                 
@@ -275,11 +271,11 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 print(f"📝 Image2 content type: {image2.content_type}")
                 print(f"📝 Image2 size: {image2.size if hasattr(image2, 'size') else 'unknown'}")
                 
-                image2_filename = await save_image_file(image2)
-                if not image2_filename:
-                    print(f"❌ Failed to save image2: {image2.filename}")
+                image2_data_url = await save_image_file(image2)
+                if not image2_data_url:
+                    print(f"❌ Failed to convert image2: {image2.filename}")
                     raise HTTPException(status_code=400, detail="Invalid image2 file type or size")
-                print(f"✅ Image2 saved as: {image2_filename}")
+                print(f"✅ Image2 converted to data URL (length: {len(image2_data_url)})")
             else:
                 print(f"📝 No image2 provided")
                 
@@ -298,8 +294,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
         print(f"📝 Title: {title}")
         print(f"📝 Content length: {len(content)}")
         print(f"📝 Parsed date: {parsed_date}")
-        print(f"📝 Image1 filename: {image1_filename}")
-        print(f"📝 Image2 filename: {image2_filename}")
+        print(f"📝 Image1 data URL length: {len(image1_data_url) if image1_data_url else 0}")
+        print(f"📝 Image2 data URL length: {len(image2_data_url) if image2_data_url else 0}")
         print(f"📝 Author ID: {admin_user['id']}")
         
         # Get current timestamp as string for SQLite
@@ -314,8 +310,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 title,
                 content,
                 str(parsed_date) if parsed_date else None,
-                image1_filename,
-                image2_filename,
+                image1_data_url,
+                image2_data_url,
                 admin_user["id"],
                 now_str,
                 now_str,
@@ -345,8 +341,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
             "title": title,
             "content": content,
             "competition_date": str(parsed_date) if parsed_date else None,
-            "image1_url": f"/uploads/images/{image1_filename}" if image1_filename else None,
-            "image2_url": f"/uploads/images/{image2_filename}" if image2_filename else None,
+            "image1_url": image1_data_url,  # Return data URL directly
+            "image2_url": image2_data_url,  # Return data URL directly
             "author": "Admin",
             "published": True,
             "created_at": now.isoformat(),
@@ -449,16 +445,16 @@ async def update_blog(
         
         # Handle image uploads
         if image1:
-            image1_filename = await save_image_file(image1)
-            if image1_filename:
+            image1_data_url = await save_image_file(image1)
+            if image1_data_url:
                 update_fields.append("image1_path = ?")
-                update_values.append(image1_filename)
+                update_values.append(image1_data_url)
         
         if image2:
-            image2_filename = await save_image_file(image2)
-            if image2_filename:
+            image2_data_url = await save_image_file(image2)
+            if image2_data_url:
                 update_fields.append("image2_path = ?")
-                update_values.append(image2_filename)
+                update_values.append(image2_data_url)
         
         if not update_fields:
             raise HTTPException(status_code=400, detail="No fields to update")
@@ -477,7 +473,7 @@ async def update_blog(
         print(f"✅ Blog updated successfully: ID {blog_id}")
         
         # Return updated blog
-        return await get_blog(blog_id, db)
+        return await get_blog(blog_id)
         
     except HTTPException:
         raise
@@ -507,18 +503,7 @@ async def delete_blog(
         await db.execute("DELETE FROM blogs WHERE id = ?", (blog_id,))
         await db.commit()
         
-        # Clean up image files
-        if blog[0]:  # image1_path
-            try:
-                os.remove(os.path.join(UPLOAD_DIR, blog[0]))
-            except:
-                pass
-        
-        if blog[1]:  # image2_path
-            try:
-                os.remove(os.path.join(UPLOAD_DIR, blog[1]))
-            except:
-                pass
+        # No need to clean up image files since they're stored in database as data URLs
         
         print(f"✅ Blog deleted successfully: {blog[2]}")
         return {"success": True, "message": "Blog post deleted successfully"}
