@@ -2,24 +2,33 @@ from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Q
 from typing import List, Optional
 import os
 import uuid
-import base64
 import traceback
 from datetime import datetime
+
+# Cloudinary imports
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
 
 from app.schemas import Blog, BlogList
 from app.auth import require_admin
 
 router = APIRouter(prefix="/api/blogs", tags=["blogs"])
 
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
 # File upload settings
-UPLOAD_DIR = "uploads/images"
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 
 async def save_image_file(file: UploadFile) -> Optional[str]:
-    """Convert uploaded image file to base64 data URL and return it"""
+    """Upload image to Cloudinary and return secure URL"""
     try:
-        print(f"🔍 Starting save_image_file for: {file.filename}")
+        print(f"🔍 Starting Cloudinary upload for: {file.filename}")
         
         if not file.filename:
             print("❌ No filename provided")
@@ -46,27 +55,27 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
             print(f"❌ File too large: {len(content)} > {MAX_FILE_SIZE}")
             return None
         
-        # Convert to base64
-        print(f"🔍 Converting to base64...")
-        base64_content = base64.b64encode(content).decode('utf-8')
+        # Generate unique public_id for Cloudinary
+        unique_id = f"mun_blog_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
         
-        # Create data URL with proper MIME type
-        mime_type_map = {
-            '.jpg': 'image/jpeg',
-            '.jpeg': 'image/jpeg', 
-            '.png': 'image/png',
-            '.gif': 'image/gif',
-            '.webp': 'image/webp'
-        }
+        # Upload to Cloudinary
+        print(f"🔍 Uploading to Cloudinary with ID: {unique_id}")
+        result = cloudinary.uploader.upload(
+            content,
+            public_id=unique_id,
+            folder="mun_blogs",  # Organize in folders
+            resource_type="image",
+            format="auto",  # Auto-optimize format
+            quality="auto",  # Auto-optimize quality
+            fetch_format="auto"  # Auto-deliver best format for browser
+        )
         
-        mime_type = mime_type_map.get(file_ext, 'image/jpeg')
-        data_url = f"data:{mime_type};base64,{base64_content}"
-        
-        print(f"✅ Image converted to base64 data URL (length: {len(data_url)})")
-        return data_url
+        cloudinary_url = result['secure_url']
+        print(f"✅ Image uploaded to Cloudinary: {cloudinary_url}")
+        return cloudinary_url
         
     except Exception as e:
-        print(f"❌ Error in save_image_file: {str(e)}")
+        print(f"❌ Error uploading to Cloudinary: {str(e)}")
         print(f"❌ Error type: {type(e)}")
         traceback.print_exc()
         return None
@@ -104,8 +113,8 @@ async def get_blogs(
                     "title": blog[1],
                     "content": blog[2],
                     "competition_date": blog[3],
-                    "image1_url": blog[4] if blog[4] else None,  # Store data URL directly
-                    "image2_url": blog[5] if blog[5] else None,  # Store data URL directly
+                    "image1_url": blog[4] if blog[4] else None,  # Cloudinary URL from database
+                    "image2_url": blog[5] if blog[5] else None,  # Cloudinary URL from database
                     "created_at": blog[6],
                     "updated_at": blog[7],
                     "author": "Admin",
@@ -159,8 +168,8 @@ async def get_blog(blog_id: int):
             "title": blog[1],
             "content": blog[2],
             "competition_date": blog[3],
-            "image1_url": blog[4] if blog[4] else None,  # Store data URL directly
-            "image2_url": blog[5] if blog[5] else None,  # Store data URL directly
+            "image1_url": blog[4] if blog[4] else None,  # Cloudinary URL from database
+            "image2_url": blog[5] if blog[5] else None,  # Cloudinary URL from database
             "created_at": blog[6],
             "updated_at": blog[7],
             "author": "Admin",
@@ -236,8 +245,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 raise HTTPException(status_code=400, detail="Invalid competition_date format. Use YYYY-MM-DD")
         
         # Handle image uploads
-        image1_data_url = None
-        image2_data_url = None
+        image1_url = None
+        image2_url = None
         
         print(f"📝 Starting image processing...")
         
@@ -247,11 +256,11 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 print(f"📝 Image1 content type: {image1.content_type}")
                 print(f"📝 Image1 size: {image1.size if hasattr(image1, 'size') else 'unknown'}")
                 
-                image1_data_url = await save_image_file(image1)
-                if not image1_data_url:
-                    print(f"❌ Failed to convert image1: {image1.filename}")
+                image1_url = await save_image_file(image1)
+                if not image1_url:
+                    print(f"❌ Failed to upload image1: {image1.filename}")
                     raise HTTPException(status_code=400, detail="Invalid image1 file type or size")
-                print(f"✅ Image1 converted to data URL (length: {len(image1_data_url)})")
+                print(f"✅ Image1 uploaded to Cloudinary: {image1_url}")
             else:
                 print(f"📝 No image1 provided")
                 
@@ -271,11 +280,11 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 print(f"📝 Image2 content type: {image2.content_type}")
                 print(f"📝 Image2 size: {image2.size if hasattr(image2, 'size') else 'unknown'}")
                 
-                image2_data_url = await save_image_file(image2)
-                if not image2_data_url:
-                    print(f"❌ Failed to convert image2: {image2.filename}")
+                image2_url = await save_image_file(image2)
+                if not image2_url:
+                    print(f"❌ Failed to upload image2: {image2.filename}")
                     raise HTTPException(status_code=400, detail="Invalid image2 file type or size")
-                print(f"✅ Image2 converted to data URL (length: {len(image2_data_url)})")
+                print(f"✅ Image2 uploaded to Cloudinary: {image2_url}")
             else:
                 print(f"📝 No image2 provided")
                 
@@ -294,8 +303,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
         print(f"📝 Title: {title}")
         print(f"📝 Content length: {len(content)}")
         print(f"📝 Parsed date: {parsed_date}")
-        print(f"📝 Image1 data URL length: {len(image1_data_url) if image1_data_url else 0}")
-        print(f"📝 Image2 data URL length: {len(image2_data_url) if image2_data_url else 0}")
+        print(f"📝 Image1 URL: {image1_url if image1_url else 'None'}")
+        print(f"📝 Image2 URL: {image2_url if image2_url else 'None'}")
         print(f"📝 Author ID: {admin_user['id']}")
         
         # Get current timestamp as string for SQLite
@@ -310,8 +319,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 title,
                 content,
                 str(parsed_date) if parsed_date else None,
-                image1_data_url,
-                image2_data_url,
+                image1_url,
+                image2_url,
                 admin_user["id"],
                 now_str,
                 now_str,
@@ -341,8 +350,8 @@ async def process_blog_creation(title, content, competition_date, image1, image2
             "title": title,
             "content": content,
             "competition_date": str(parsed_date) if parsed_date else None,
-            "image1_url": image1_data_url,  # Return data URL directly
-            "image2_url": image2_data_url,  # Return data URL directly
+            "image1_url": image1_url,  # Return Cloudinary URL directly
+            "image2_url": image2_url,  # Return Cloudinary URL directly
             "author": "Admin",
             "published": True,
             "created_at": now.isoformat(),
@@ -445,16 +454,16 @@ async def update_blog(
         
         # Handle image uploads
         if image1:
-            image1_data_url = await save_image_file(image1)
-            if image1_data_url:
+            image1_url = await save_image_file(image1)
+            if image1_url:
                 update_fields.append("image1_path = ?")
-                update_values.append(image1_data_url)
+                update_values.append(image1_url)
         
         if image2:
-            image2_data_url = await save_image_file(image2)
-            if image2_data_url:
+            image2_url = await save_image_file(image2)
+            if image2_url:
                 update_fields.append("image2_path = ?")
-                update_values.append(image2_data_url)
+                update_values.append(image2_url)
         
         if not update_fields:
             raise HTTPException(status_code=400, detail="No fields to update")
@@ -503,7 +512,9 @@ async def delete_blog(
         await db.execute("DELETE FROM blogs WHERE id = ?", (blog_id,))
         await db.commit()
         
-        # No need to clean up image files since they're stored in database as data URLs
+        # Note: Cloudinary images remain in cloud storage for potential recovery
+        # To delete from Cloudinary, you would need to extract public_id and call:
+        # cloudinary.uploader.destroy(public_id)
         
         print(f"✅ Blog deleted successfully: {blog[2]}")
         return {"success": True, "message": "Blog post deleted successfully"}
