@@ -55,6 +55,11 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
             print(f"❌ File too large: {len(content)} > {MAX_FILE_SIZE}")
             return None
         
+        # Check if Cloudinary is configured
+        if not os.getenv("CLOUDINARY_CLOUD_NAME"):
+            print("❌ Cloudinary not configured - missing CLOUDINARY_CLOUD_NAME")
+            return None
+        
         # Generate unique public_id for Cloudinary
         unique_id = f"mun_blog_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
         
@@ -65,9 +70,7 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
             public_id=unique_id,
             folder="mun_blogs",  # Organize in folders
             resource_type="image",
-            format="auto",  # Auto-optimize format
-            quality="auto",  # Auto-optimize quality
-            fetch_format="auto"  # Auto-deliver best format for browser
+            quality="auto"  # Auto-optimize quality
         )
         
         cloudinary_url = result['secure_url']
@@ -256,10 +259,28 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 print(f"📝 Image1 content type: {image1.content_type}")
                 print(f"📝 Image1 size: {image1.size if hasattr(image1, 'size') else 'unknown'}")
                 
+                # Check file extension before processing
+                file_ext = os.path.splitext(image1.filename)[1].lower()
+                if file_ext not in ALLOWED_EXTENSIONS:
+                    raise HTTPException(status_code=400, detail=f"Invalid image1 file type '{file_ext}'. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}")
+                
+                # Try to read content to check size
+                content = await image1.read()
+                print(f"📝 Image1 content size: {len(content)} bytes")
+                
+                if len(content) == 0:
+                    raise HTTPException(status_code=400, detail="Image1 file is empty")
+                
+                if len(content) > MAX_FILE_SIZE:
+                    raise HTTPException(status_code=400, detail=f"Image1 file too large ({len(content)} bytes). Maximum size: {MAX_FILE_SIZE // (1024*1024)}MB")
+                
+                # Reset file pointer for save_image_file
+                await image1.seek(0)
+                
                 image1_url = await save_image_file(image1)
                 if not image1_url:
                     print(f"❌ Failed to upload image1: {image1.filename}")
-                    raise HTTPException(status_code=400, detail="Invalid image1 file type or size")
+                    raise HTTPException(status_code=400, detail="Failed to upload image1 to cloud storage")
                 print(f"✅ Image1 uploaded to Cloudinary: {image1_url}")
             else:
                 print(f"📝 No image1 provided")
@@ -280,10 +301,28 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                 print(f"📝 Image2 content type: {image2.content_type}")
                 print(f"📝 Image2 size: {image2.size if hasattr(image2, 'size') else 'unknown'}")
                 
+                # Check file extension before processing
+                file_ext = os.path.splitext(image2.filename)[1].lower()
+                if file_ext not in ALLOWED_EXTENSIONS:
+                    raise HTTPException(status_code=400, detail=f"Invalid image2 file type '{file_ext}'. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}")
+                
+                # Try to read content to check size
+                content = await image2.read()
+                print(f"📝 Image2 content size: {len(content)} bytes")
+                
+                if len(content) == 0:
+                    raise HTTPException(status_code=400, detail="Image2 file is empty")
+                
+                if len(content) > MAX_FILE_SIZE:
+                    raise HTTPException(status_code=400, detail=f"Image2 file too large ({len(content)} bytes). Maximum size: {MAX_FILE_SIZE // (1024*1024)}MB")
+                
+                # Reset file pointer for save_image_file
+                await image2.seek(0)
+                
                 image2_url = await save_image_file(image2)
                 if not image2_url:
                     print(f"❌ Failed to upload image2: {image2.filename}")
-                    raise HTTPException(status_code=400, detail="Invalid image2 file type or size")
+                    raise HTTPException(status_code=400, detail="Failed to upload image2 to cloud storage")
                 print(f"✅ Image2 uploaded to Cloudinary: {image2_url}")
             else:
                 print(f"📝 No image2 provided")
