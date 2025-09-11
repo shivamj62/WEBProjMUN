@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import NewsCarousel from '@/components/ui/news-carousel';
+import MultiCardBlogCarousel from '@/components/ui/multi-card-blog-carousel';
 import Link from 'next/link';
 
 const Blogs = () => {
@@ -37,15 +37,13 @@ const Blogs = () => {
           </p>
         </div>
 
-        {/* News Carousel */}
+        {/* Multi-Card Blog Carousel */}
         <div className="mb-12 min-h-[400px]">
-          <NewsCarousel
-            maxSlides={6}
+          <MultiCardBlogCarousel
+            maxBlogs={20}
             autoPlay={true}
             autoPlayInterval={6000}
-            showControls={true}
             showIndicators={true}
-            className="mb-8"
           />
         </div>
       </div>

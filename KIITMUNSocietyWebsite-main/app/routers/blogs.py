@@ -83,7 +83,7 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
 @router.get("", response_model=dict)
 async def get_blogs(
     page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
+    limit: int = Query(20, ge=1, le=50),
 ):
     """Get list of MUN blog posts"""
     
