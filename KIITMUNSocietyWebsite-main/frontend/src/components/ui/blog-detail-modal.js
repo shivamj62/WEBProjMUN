@@ -146,10 +146,15 @@ const BlogDetailModal = ({
 
             {/* Additional Images */}
             <div className="mt-8 space-y-6">
-              {blog.image2_path && (
+              {/* Support both new image2_url and legacy image2_path */}
+              {(blog.image2_url || blog.image2_path) && (
                 <div className="rounded-lg overflow-hidden">
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${blog.image2_path}`}
+                    src={
+                      blog.image2_url 
+                        ? (blog.image2_url.startsWith('http') ? blog.image2_url : `${process.env.NEXT_PUBLIC_API_URL}${blog.image2_url}`)
+                        : (blog.image2_path.startsWith('http') ? blog.image2_path : `${process.env.NEXT_PUBLIC_API_URL}${blog.image2_path}`)
+                    }
                     alt={`${blog.title} - Image 2`}
                     className="w-full h-auto object-cover"
                   />
@@ -159,7 +164,7 @@ const BlogDetailModal = ({
               {blog.image3_path && (
                 <div className="rounded-lg overflow-hidden">
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${blog.image3_path}`}
+                    src={blog.image3_path.startsWith('http') ? blog.image3_path : `${process.env.NEXT_PUBLIC_API_URL}${blog.image3_path}`}
                     alt={`${blog.title} - Image 3`}
                     className="w-full h-auto object-cover"
                   />

@@ -32,12 +32,23 @@ const NewsCarousel = ({
         const transformedBlogs = response.data.blogs
           .slice(0, maxSlides)
           .map(blog => {
-            // Only use fallback if no image is provided by API
+            // Handle image URLs correctly - check if it's already a complete URL (Cloudinary)
             let blogImage = null;
             if (blog.image1_url) {
-              blogImage = `${process.env.NEXT_PUBLIC_API_URL}${blog.image1_url}`;
+              // If it's a Cloudinary URL (starts with http), use it directly
+              if (blog.image1_url.startsWith('http')) {
+                blogImage = blog.image1_url;
+              } else {
+                // If it's a local path, prepend API URL
+                blogImage = `${process.env.NEXT_PUBLIC_API_URL}${blog.image1_url}`;
+              }
             } else if (blog.image_path) {
-              blogImage = `${process.env.NEXT_PUBLIC_API_URL}${blog.image_path}`;
+              // Handle legacy image_path field
+              if (blog.image_path.startsWith('http')) {
+                blogImage = blog.image_path;
+              } else {
+                blogImage = `${process.env.NEXT_PUBLIC_API_URL}${blog.image_path}`;
+              }
             } else {
               // Use fallback only when API provides no image
               blogImage = '/images/about-mun.png';
@@ -56,7 +67,8 @@ const NewsCarousel = ({
               competition_date: blog.competition_date,
               created_at: blog.created_at,
               updated_at: blog.updated_at,
-              image2_path: blog.image2_path,
+              image2_url: blog.image2_url, // New Cloudinary URL
+              image2_path: blog.image2_path, // Legacy path for backward compatibility
               image3_path: blog.image3_path
             };
           });

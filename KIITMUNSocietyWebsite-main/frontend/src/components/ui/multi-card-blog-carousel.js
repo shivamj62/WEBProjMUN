@@ -37,7 +37,8 @@ const MultiCardBlogCarousel = ({
             // If it's already a Cloudinary URL, use it directly
             blogImage = blog.image1_url.startsWith('http') ? blog.image1_url : `${process.env.NEXT_PUBLIC_API_URL}${blog.image1_url}`;
           } else if (blog.image_path) {
-            blogImage = `${process.env.NEXT_PUBLIC_API_URL}${blog.image_path}`;
+            // Handle legacy image_path field
+            blogImage = blog.image_path.startsWith('http') ? blog.image_path : `${process.env.NEXT_PUBLIC_API_URL}${blog.image_path}`;
           } else {
             blogImage = '/images/about-mun.png';
           }
@@ -48,6 +49,7 @@ const MultiCardBlogCarousel = ({
             content: blog.content,
             competition_date: blog.competition_date,
             image_url: blogImage,
+            image2_url: blog.image2_url, // New Cloudinary URL for second image
             created_at: blog.created_at,
             author: blog.author || 'Admin'
           };
