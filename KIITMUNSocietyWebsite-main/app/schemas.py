@@ -95,8 +95,9 @@ class Blog(BlogBase):
             title=row[1],
             content=row[2],
             competition_date=comp_date,
-            image1_url=f"/uploads/images/{row[4]}" if row[4] else None,  # image1_path is at index 4
-            image2_url=f"/uploads/images/{row[5]}" if row[5] else None,  # image2_path is at index 5
+            # Handle both Cloudinary URLs and legacy local paths
+            image1_url=row[4] if row[4] and row[4].startswith('http') else f"/uploads/images/{row[4]}" if row[4] else None,
+            image2_url=row[5] if row[5] and row[5].startswith('http') else f"/uploads/images/{row[5]}" if row[5] else None,
             created_at=row[6],  # created_at is at index 6
             updated_at=row[7],  # updated_at is at index 7
             author=row[8] if len(row) > 8 else "Admin"  # author name from join is at index 8
@@ -265,8 +266,9 @@ class BlogWithAuthor(BlogBase):
             title=row[1],
             content=row[2],
             competition_date=row[3],
-            image1_url=f"/uploads/images/{row[4]}" if row[4] else None,
-            image2_url=f"/uploads/images/{row[5]}" if row[5] else None,
+            # Handle both Cloudinary URLs and legacy local paths
+            image1_url=row[4] if row[4] and row[4].startswith('http') else f"/uploads/images/{row[4]}" if row[4] else None,
+            image2_url=row[5] if row[5] and row[5].startswith('http') else f"/uploads/images/{row[5]}" if row[5] else None,
             created_at=row[6],
             updated_at=row[7],
             author=row[8] if len(row) > 8 else "Admin",

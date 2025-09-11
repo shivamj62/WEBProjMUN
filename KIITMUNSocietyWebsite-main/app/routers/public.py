@@ -47,12 +47,21 @@ async def get_blogs(
             "published": row[8],
             "author_name": row[9]
         }
+        # Handle both Cloudinary URLs and legacy local paths
+        image1_url = None
+        if blog_data.get("image1_path"):
+            image1_url = blog_data["image1_path"] if blog_data["image1_path"].startswith('http') else f"/uploads/images/{blog_data['image1_path']}"
+        
+        image2_url = None
+        if blog_data.get("image2_path"):
+            image2_url = blog_data["image2_path"] if blog_data["image2_path"].startswith('http') else f"/uploads/images/{blog_data['image2_path']}"
+        
         blog = Blog(
             id=blog_data["id"],
             title=blog_data["title"],
             content=blog_data["content"],
-            image1_url=f"/uploads/images/{blog_data['image1_path']}" if blog_data.get("image1_path") else None,
-            image2_url=f"/uploads/images/{blog_data['image2_path']}" if blog_data.get("image2_path") else None,
+            image1_url=image1_url,
+            image2_url=image2_url,
             competition_date=blog_data.get("competition_date"),
             author=blog_data["author_name"],
             created_at=blog_data["created_at"],
@@ -92,12 +101,21 @@ async def get_blog(blog_id: int, cur = Depends(get_db)):
         "published": row[8],
         "author_name": row[9]
     }
+    # Handle both Cloudinary URLs and legacy local paths
+    image1_url = None
+    if blog_data.get("image1_path"):
+        image1_url = blog_data["image1_path"] if blog_data["image1_path"].startswith('http') else f"/uploads/images/{blog_data['image1_path']}"
+    
+    image2_url = None
+    if blog_data.get("image2_path"):
+        image2_url = blog_data["image2_path"] if blog_data["image2_path"].startswith('http') else f"/uploads/images/{blog_data['image2_path']}"
+    
     return Blog(
         id=blog_data["id"],
         title=blog_data["title"],
         content=blog_data["content"],
-        image1_url=f"/uploads/images/{blog_data['image1_path']}" if blog_data.get("image1_path") else None,
-        image2_url=f"/uploads/images/{blog_data['image2_path']}" if blog_data.get("image2_path") else None,
+        image1_url=image1_url,
+        image2_url=image2_url,
         competition_date=blog_data.get("competition_date"),
         author=blog_data["author_name"],
         created_at=blog_data["created_at"],
