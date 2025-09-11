@@ -46,6 +46,22 @@ class BlogUpdate(BlogBase):
     content: Optional[str] = None
     competition_date: Optional[date] = None
 
+class BlogResponse(BaseModel):
+    """Response schema for blog creation/updates - ensures only JSON-serializable data"""
+    id: int
+    title: str
+    content: str  # Must be text content, never binary data
+    competition_date: Optional[str] = None  # String format for JSON serialization
+    image1_url: Optional[str] = None  # Cloudinary URL string only
+    image2_url: Optional[str] = None  # Cloudinary URL string only
+    author: str
+    published: bool
+    created_at: str  # ISO string format for JSON serialization
+    updated_at: str  # ISO string format for JSON serialization
+    
+    class Config:
+        from_attributes = True
+
 class Blog(BlogBase):
     id: int
     image1_url: Optional[str] = None

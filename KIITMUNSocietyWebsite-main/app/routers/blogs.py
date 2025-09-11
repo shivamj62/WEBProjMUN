@@ -10,7 +10,7 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 
-from app.schemas import Blog, BlogList
+from app.schemas import Blog, BlogList, BlogResponse
 from app.auth import require_admin
 
 router = APIRouter(prefix="/api/blogs", tags=["blogs"])
@@ -44,15 +44,15 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
         
         # Read file content
         print(f"🔍 Reading file content...")
-        content = await file.read()
-        print(f"🔍 Read {len(content)} bytes")
+        file_content = await file.read()
+        print(f"🔍 Read {len(file_content)} bytes")
         
-        if len(content) == 0:
+        if len(file_content) == 0:
             print(f"❌ File is empty")
             return None
         
-        if len(content) > MAX_FILE_SIZE:
-            print(f"❌ File too large: {len(content)} > {MAX_FILE_SIZE}")
+        if len(file_content) > MAX_FILE_SIZE:
+            print(f"❌ File too large: {len(file_content)} > {MAX_FILE_SIZE}")
             return None
         
         # Check if Cloudinary is configured
@@ -66,7 +66,7 @@ async def save_image_file(file: UploadFile) -> Optional[str]:
         # Upload to Cloudinary
         print(f"🔍 Uploading to Cloudinary with ID: {unique_id}")
         result = cloudinary.uploader.upload(
-            content,
+            file_content,
             public_id=unique_id,
             folder="mun_blogs",  # Organize in folders
             resource_type="image",
@@ -193,7 +193,7 @@ async def debug_blog_creation():
     print("📝 DEBUG: Simple endpoint called successfully!")
     return {"message": "Debug endpoint works", "status": "success"}
 
-@router.post("", response_model=dict)
+@router.post("", response_model=BlogResponse)
 async def create_blog(
     title: str = Form(...),
     content: str = Form(...),
@@ -265,14 +265,14 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                     raise HTTPException(status_code=400, detail=f"Invalid image1 file type '{file_ext}'. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}")
                 
                 # Try to read content to check size
-                content = await image1.read()
-                print(f"📝 Image1 content size: {len(content)} bytes")
+                image_content = await image1.read()
+                print(f"📝 Image1 content size: {len(image_content)} bytes")
                 
-                if len(content) == 0:
+                if len(image_content) == 0:
                     raise HTTPException(status_code=400, detail="Image1 file is empty")
                 
-                if len(content) > MAX_FILE_SIZE:
-                    raise HTTPException(status_code=400, detail=f"Image1 file too large ({len(content)} bytes). Maximum size: {MAX_FILE_SIZE // (1024*1024)}MB")
+                if len(image_content) > MAX_FILE_SIZE:
+                    raise HTTPException(status_code=400, detail=f"Image1 file too large ({len(image_content)} bytes). Maximum size: {MAX_FILE_SIZE // (1024*1024)}MB")
                 
                 # Reset file pointer for save_image_file
                 await image1.seek(0)
@@ -307,14 +307,14 @@ async def process_blog_creation(title, content, competition_date, image1, image2
                     raise HTTPException(status_code=400, detail=f"Invalid image2 file type '{file_ext}'. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}")
                 
                 # Try to read content to check size
-                content = await image2.read()
-                print(f"📝 Image2 content size: {len(content)} bytes")
+                image_content = await image2.read()
+                print(f"📝 Image2 content size: {len(image_content)} bytes")
                 
-                if len(content) == 0:
+                if len(image_content) == 0:
                     raise HTTPException(status_code=400, detail="Image2 file is empty")
                 
-                if len(content) > MAX_FILE_SIZE:
-                    raise HTTPException(status_code=400, detail=f"Image2 file too large ({len(content)} bytes). Maximum size: {MAX_FILE_SIZE // (1024*1024)}MB")
+                if len(image_content) > MAX_FILE_SIZE:
+                    raise HTTPException(status_code=400, detail=f"Image2 file too large ({len(image_content)} bytes). Maximum size: {MAX_FILE_SIZE // (1024*1024)}MB")
                 
                 # Reset file pointer for save_image_file
                 await image2.seek(0)
@@ -336,6 +336,24 @@ async def process_blog_creation(title, content, competition_date, image1, image2
             import traceback
             traceback.print_exc()
             raise HTTPException(status_code=500, detail=f"Error processing image2: {str(e)}")
+        
+        # Validate data types before database insertion
+        print(f"📝 Validating data types...")
+        print(f"📝 Title type: {type(title)} - {title}")
+        print(f"📝 Content type: {type(content)} - Content length: {len(content) if isinstance(content, str) else 'Not string'}")
+        print(f"📝 Image1 URL type: {type(image1_url)} - {image1_url}")
+        print(f"📝 Image2 URL type: {type(image2_url)} - {image2_url}")
+        
+        # Ensure content is a string (blog text, not binary data)
+        if not isinstance(content, str):
+            raise HTTPException(status_code=500, detail=f"Content must be string, got {type(content)}")
+        
+        # Ensure URLs are strings if provided
+        if image1_url and not isinstance(image1_url, str):
+            raise HTTPException(status_code=500, detail=f"Image1 URL must be string, got {type(image1_url)}")
+        
+        if image2_url and not isinstance(image2_url, str):
+            raise HTTPException(status_code=500, detail=f"Image2 URL must be string, got {type(image2_url)}")
         
         # Insert new blog
         print(f"📝 Inserting blog into database...")
@@ -384,18 +402,22 @@ async def process_blog_creation(title, content, competition_date, image1, image2
         # Convert datetime objects to strings for JSON serialization
         now = datetime.now()
         
-        return {
-            "id": blog_id,
-            "title": title,
-            "content": content,
-            "competition_date": str(parsed_date) if parsed_date else None,
-            "image1_url": image1_url,  # Return Cloudinary URL directly
-            "image2_url": image2_url,  # Return Cloudinary URL directly
-            "author": "Admin",
-            "published": True,
-            "created_at": now.isoformat(),
-            "updated_at": now.isoformat()
-        }
+        # Create response using BlogResponse schema to ensure type safety
+        response_data = BlogResponse(
+            id=blog_id,
+            title=title,
+            content=content,  # This should now be the text content, not binary data
+            competition_date=str(parsed_date) if parsed_date else None,
+            image1_url=image1_url,  # Cloudinary URL string
+            image2_url=image2_url,  # Cloudinary URL string
+            author="Admin",
+            published=True,
+            created_at=now.isoformat(),
+            updated_at=now.isoformat()
+        )
+        
+        print(f"📝 Response data types validation passed!")
+        return response_data
         
     except HTTPException:
         raise
